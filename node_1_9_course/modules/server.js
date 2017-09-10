@@ -1,13 +1,24 @@
 var http = require('http');
 var colors = require('colors');
 
+var handlers = require('./handlers');
+
 function start() {
     function onRequest(request, response) {
         console.log("Odebrano zapytanie.");
+        console.log("Zapytanie " + request.url +" odebrane.")
         response.writeHead(200, {"Content-Type": "text/plain"});
-        //todo: Ask why the encoding is wrong
-        response.write("Pierwsze koty za płoty");
-        response.end();
+        switch (request.url) {
+            case '/': //to samo zachowanie dla / i dla /start
+            case '/start':
+                handlers.welcome(request, response);
+                break;
+            case '/upload':
+                handlers.upload(request, response);
+                break;
+            default:
+                handlers.error(request, response);
+        }
     }
 
     http.createServer(onRequest).listen(9000);
